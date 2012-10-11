@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BplusDotNet">
+      <HintPath>Libs\BplusDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\log4net.dll</HintPath>
@@ -58,7 +61,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\C-Sharp-Sip-Lib\SIPLib\SIPLib.csproj">
+    <ProjectReference Include="..\..\C-Sharp-Sip-Lib\SIPLib\SIPLib.csproj">
       <Project>{BCB5CEA8-22E7-470C-B566-CFEA2D051C9B}</Project>
       <Name>SIPLib</Name>
     </ProjectReference>
