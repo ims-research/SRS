@@ -166,7 +166,7 @@ namespace SRS
             const int scscfPort = 6060;
             InitKeyValueStore();
             SIPStack stack = CreateStack(_app, scscfIP, scscfPort);
-            stack.Uri = new SIPURI("SRS@open-ims.test");
+            stack.Uri = new SIPURI("srs@open-ims.test");
             StartTimer();
             WebServer wb = new WebServer(_tree);
             wb.Start();

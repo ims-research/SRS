@@ -1,0 +1,32 @@
+﻿<html>
+            <head><title>List of available services</title><meta http-equiv="refresh" content="15" ></head>
+            <body>
+                <div id="content">
+                <h1>Services</h1>
+				{_ Total number of of services}
+				There are currently {len(services)} active services.
+					<table>
+					<tbody>
+						<tr>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Version</th>
+							<th>Server IP</th>
+							<th>Port</th>
+						</tr>
+				{for key, service in services:
+						<tr>
+							<td>{dump service.ServiceInformation[0].Value}</td>
+							<td>{dump service.ServiceInformation[1].Value}</td>
+							<td>{dump service.ServiceInformation[2].Value}</td>
+							<td>{dump service.ServiceConfig[0].Value}</td>
+							<td>{dump service.ServiceConfig[1].Value}</td>
+						</tr>
+				|empty:
+					No services to display.
+				}
+					</tbody>
+				</table>
+				</div>
+            </body>
+        </html>
