@@ -19,6 +19,7 @@ namespace SRS
         private static SIPApp _app;
         private static BplusTree _tree;
         private static List<string> _changedServices = new List<string>();
+
         public static SIPStack CreateStack(SIPApp app, string proxyIp = null, int proxyPort = -1)
         {
             SIPStack myStack = new SIPStack(app);
@@ -89,15 +90,24 @@ namespace SRS
 
         public static void InitKeyValueStore()
         {
-            if (File.Exists("services.dat") && File.Exists("services.tree"))
+            try
             {
-                _tree = BplusTree.ReOpen("services.tree", "services.dat");
-                
+                if (File.Exists("services.dat") && File.Exists("services.tree"))
+                {
+                    _tree = BplusTree.ReOpen("services.tree", "services.dat");
+
+                }
+                else
+                {
+                    _tree = BplusTree.Initialize("services.tree", "services.dat", 36);
+                }
             }
-            else
+            catch (Exception)
             {
-                _tree = BplusTree.Initialize("services.tree", "services.dat", 36);
+                Log.Error("Error initialising service tree");
+                //_tree = BplusTree.Initialize("services.tree", "services.dat", 36);
             }
+
         }
 
         private static void ProcessReceivedService(string serviceXML)
@@ -158,6 +168,8 @@ namespace SRS
             SIPStack stack = CreateStack(_app, scscfIP, scscfPort);
             stack.Uri = new SIPURI("SRS@open-ims.test");
             StartTimer();
+            WebServer wb = new WebServer(_tree);
+            wb.Start();
             Console.WriteLine("Press \'q\' to quit");
             while (Console.Read() != 'q') ;
         }
