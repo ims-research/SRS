@@ -65,6 +65,12 @@
   <ItemGroup>
     <Content Include="Libs\Cottle.dll" />
     <Content Include="Libs\log4net.dll" />
+    <Content Include="Resources\favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\site.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

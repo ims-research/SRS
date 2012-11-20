@@ -1,11 +1,14 @@
 ﻿<html>
-            <head><title>List of available services</title><meta http-equiv="refresh" content="15" ></head>
+            <head>
+				<title>List of available services</title>
+				<meta http-equiv="refresh" content="15" >
+				<link rel="stylesheet" href="/site.css" type="text/css" />			</head>
             <body>
                 <div id="content">
                 <h1>Services</h1>
-				{_ Total number of of services}
 				There are currently {len(services)} active services.
-					<table>
+				<div style="padding:50px;width:600px;">
+					<table class="tables">
 					<tbody>
 						<tr>
 							<th>Name</th>
@@ -14,19 +17,24 @@
 							<th>Server IP</th>
 							<th>Port</th>
 						</tr>
+				{set count to 1}
 				{for key, service in services:
 						<tr>
-							<td>{dump service.ServiceInformation[0].Value}</td>
-							<td>{dump service.ServiceInformation[1].Value}</td>
-							<td>{dump service.ServiceInformation[2].Value}</td>
-							<td>{dump service.ServiceConfig[0].Value}</td>
-							<td>{dump service.ServiceConfig[1].Value}</td>
+							<th scope="row" class="{if gt(count, 0):spec|else:specalt}">{dump service.ServiceInformation[0].Value}</th>
+							<td {if gt(count, 0):class="alt"}>{dump service.ServiceInformation[1].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.ServiceInformation[2].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.ServiceConfig[0].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.ServiceConfig[1].Value}</td>
 						</tr>
+						{if gt(count, 0):
+						{set count to -1}
+						|else:{set count to 1}}  
 				|empty:
 					No services to display.
 				}
 					</tbody>
 				</table>
+				</div>
 				</div>
             </body>
         </html>
