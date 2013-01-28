@@ -12,15 +12,14 @@ using BplusDotNet;
 
 namespace SRS
 {
-    class Program
+    static class Program
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(SIPApp));
-        private static readonly ILog SessionLog = LogManager.GetLogger("SessionLogger");
         private static SIPApp _app;
         private static BplusTree _tree;
         private static List<string> _changedServices = new List<string>();
 
-        public static SIPStack CreateStack(SIPApp app, string proxyIp = null, int proxyPort = -1)
+        private static SIPStack CreateStack(SIPApp app, string proxyIp = null, int proxyPort = -1)
         {
             SIPStack myStack = new SIPStack(app);
             if (proxyIp != null)
@@ -31,7 +30,7 @@ namespace SRS
             return myStack;
         }
 
-        public static TransportInfo CreateTransport(string listenIp, int listenPort)
+        private static TransportInfo CreateTransport(string listenIp, int listenPort)
         {
             return new TransportInfo(IPAddress.Parse(listenIp), listenPort, System.Net.Sockets.ProtocolType.Udp);
         }
@@ -43,9 +42,6 @@ namespace SRS
             string requestType = response.First("CSeq").ToString().Trim().Split()[1].ToUpper();
             switch (requestType)
             {
-                case "INVITE":
-                case "REGISTER":
-                case "BYE":
                 default:
                     Log.Info("Response for Request Type " + requestType + " is unhandled ");
                     break;
@@ -58,15 +54,6 @@ namespace SRS
             Message request = e.Message;
             switch (request.Method.ToUpper())
             {
-                case "MESSAGE":
-                case "INVITE":
-                case "BYE":
-                case "CANCEL":
-                case "ACK":
-                case "OPTIONS":
-                case "REFER":
-                case "SUBSCRIBE":
-                case "NOTIFY":
                 case "PUBLISH":
                     {
                         _app.Useragents.Add(e.UA);
@@ -79,16 +66,17 @@ namespace SRS
                         e.UA.SendResponse(m);
                         break;
                     }
-                case "INFO":
                 default:
                     {
                         Log.Info("Request with method " + request.Method.ToUpper() + " is unhandled");
+                        Message m = e.UA.CreateResponse(501, "Not Implemented");
+                        e.UA.SendResponse(m);
                         break;
                     }
             }
         }
 
-        public static void InitKeyValueStore()
+        private static void InitKeyValueStore()
         {
             try
             {
@@ -136,7 +124,7 @@ namespace SRS
         private static void StartTimer()
         {
             System.Timers.Timer aTimer = new System.Timers.Timer();
-            aTimer.Elapsed += new ElapsedEventHandler(SendServicesToUSPS);
+            aTimer.Elapsed += SendServicesToUSPS;
             aTimer.Interval = 30000;
             aTimer.Enabled = true;
         }
@@ -156,12 +144,12 @@ namespace SRS
         }
 
 
-        static void Main(string[] args)
+        static void Main()
         {
             TransportInfo localTransport = CreateTransport(Helpers.GetLocalIP(), 7242);
             _app = new SIPApp(localTransport);
-            _app.RequestRecvEvent += new EventHandler<SipMessageEventArgs>(AppRequestRecvEvent);
-            _app.ResponseRecvEvent += new EventHandler<SipMessageEventArgs>(AppResponseRecvEvent);
+            _app.RequestRecvEvent += AppRequestRecvEvent;
+            _app.ResponseRecvEvent += AppResponseRecvEvent;
             const string scscfIP = "scscf.open-ims.test";
             const int scscfPort = 6060;
             InitKeyValueStore();
@@ -171,7 +159,9 @@ namespace SRS
             WebServer wb = new WebServer(_tree);
             wb.Start();
             Console.WriteLine("Press \'q\' to quit");
-            while (Console.Read() != 'q') ;
+            while (Console.Read() != 'q')
+            {
+            }
         }
     }
 }

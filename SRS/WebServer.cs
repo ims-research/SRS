@@ -16,7 +16,6 @@ namespace SRS
         private HttpListener _listener;
         private bool _firstRun = true;
         private const string Prefixes = "http://localhost:8975/";
-        private const string RootPage = "root.html";
         private const string CSSFile = "Resources\\site.css";
         private const string FaviconFile = "Resources\\favicon.ico";
         private BplusTree _tree;
@@ -40,44 +39,35 @@ namespace SRS
 
         private string RenderTemplate(List<Service> services)
         {
-            Document document;
-            Scope scope;
-
             using (StreamReader template = new StreamReader(new FileStream("Resources\\services.cottle", FileMode.Open), Encoding.UTF8))
             {
                 try
                 {
-                    document = new Document(template); // may throw a ConfigException or DocumentException on error
+                    Document document = new Document(template);
+                    Scope scope = new Scope();
+                    CommonFunctions.Assign(scope);
+                    scope["services"] = new ReflectionValue(services);
+                    return document.Render(scope); 
                 }
                 catch (Exception)
                 {
-                    
-                    throw;
+                    Console.WriteLine("Error rendering template");
                 }
-                
             }
-
-            scope = new Scope(); // create a new empty scope to store values
-            CommonFunctions.Assign(scope); // see paragraph "Calling functions" about this line
-
-            scope["services"] = new ReflectionValue(services);
-
-            /* TODO: assign some values to scope */
-            return document.Render(scope); // may throw a RenderException on error
+            return "Error rendering template";
         }
 
         private string GetCurrentServicesHTML()
         {
-            StringBuilder sb = new StringBuilder();
             List<Service> services = new List<Service>();
             string currentkey = _tree.FirstKey();
             while (currentkey != null)
             {
                 if (_tree.ContainsKey(currentkey))
                 {
-                    Service temp_service = new Service();
-                    temp_service.ParseXMLString(_tree[currentkey]);
-                    services.Add(temp_service);
+                    Service tempService = new Service();
+                    tempService.ParseXMLString(_tree[currentkey]);
+                    services.Add(tempService);
                 }
                 currentkey = _tree.NextKey(currentkey);
             }
@@ -86,7 +76,7 @@ namespace SRS
 
         private void Receive()
         {
-            IAsyncResult result = _listener.BeginGetContext(new AsyncCallback(ListenerCallback), _listener);
+            _listener.BeginGetContext(ListenerCallback, _listener);
         }
 
 
@@ -96,15 +86,13 @@ namespace SRS
             HttpListenerContext context = _listener.EndGetContext(result);
             HttpListenerRequest request = context.Request;
             HttpListenerResponse response = context.Response;
-            string responseString = "";
             string path = "";
-            StreamReader streamReader;
             byte[] buffer = new byte[0];
             switch (request.RawUrl)
             {
                 case "/":
                 case "/root.html":
-                    responseString = GetCurrentServicesHTML();
+                    string responseString = GetCurrentServicesHTML();
                     buffer = Encoding.UTF8.GetBytes(responseString);
                     break;
                 default:

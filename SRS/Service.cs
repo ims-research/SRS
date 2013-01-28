@@ -6,11 +6,11 @@ namespace SRS
 {
     public class Service
     {
-        public Dictionary<string, string> ServiceInformation { get; set; }
-        public Dictionary<string, string> ServiceConfig { get; set; }
-        public Dictionary<string, string> SIPHeaders { get; set; }
-        public Dictionary<string, string> SIPResponses { get; set; }
-        public Dictionary<string, string> Capabilities { get; set; }
+        private Dictionary<string, string> ServiceInformation { get; set; }
+        private Dictionary<string, string> ServiceConfig { get; set; }
+        private Dictionary<string, string> SIPHeaders { get; set; }
+        private Dictionary<string, string> SIPResponses { get; set; }
+        private Dictionary<string, string> Capabilities { get; set; }
 
         public Service()
         {
@@ -23,17 +23,17 @@ namespace SRS
             ParseXMLFile(filename);
         }
 
-        public void ParseXMLFile(string filename)
+        private void ParseXMLFile(string filename)
         {
             ParseXML(XDocument.Load(filename));
         }
 
-        public void ParseXMLString(string XML)
+        public void ParseXMLString(string xml)
         {
-            ParseXML(XDocument.Parse(XML));
+            ParseXML(XDocument.Parse(xml));
         }
 
-        public void ParseXML(XDocument doc)
+        private void ParseXML(XDocument doc)
         {
             foreach (XElement block in doc.Elements("Service"))
             {
