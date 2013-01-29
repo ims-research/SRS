@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -7,17 +9,18 @@ using BplusDotNet;
 using Cottle;
 using Cottle.Commons;
 using Cottle.Values;
-using log4net.Util;
+
+#endregion
 
 namespace SRS
 {
     public class WebServer
     {
-        private HttpListener _listener;
-        private bool _firstRun = true;
         private const string Prefixes = "http://localhost:8975/";
         private const string CSSFile = "Resources\\site.css";
         private const string FaviconFile = "Resources\\favicon.ico";
+        private bool _firstRun = true;
+        private HttpListener _listener;
         private BplusTree _tree;
 
         public WebServer(BplusTree serviceTree)
@@ -39,7 +42,9 @@ namespace SRS
 
         private string RenderTemplate(List<Service> services)
         {
-            using (StreamReader template = new StreamReader(new FileStream("Resources\\services.cottle", FileMode.Open), Encoding.UTF8))
+            using (
+                StreamReader template = new StreamReader(new FileStream("Resources\\services.cottle", FileMode.Open),
+                                                         Encoding.UTF8))
             {
                 try
                 {
@@ -47,7 +52,7 @@ namespace SRS
                     Scope scope = new Scope();
                     CommonFunctions.Assign(scope);
                     scope["services"] = new ReflectionValue(services);
-                    return document.Render(scope); 
+                    return document.Render(scope);
                 }
                 catch (Exception)
                 {
@@ -110,7 +115,7 @@ namespace SRS
                         long numBytes = fInfo.Length;
                         FileStream fStream = new FileStream(path, FileMode.Open, FileAccess.Read);
                         BinaryReader br = new BinaryReader(fStream);
-                        buffer = br.ReadBytes((int)numBytes);
+                        buffer = br.ReadBytes((int) numBytes);
                         br.Close();
                         fStream.Close();
                     }

@@ -1,17 +1,15 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+
+#endregion
 
 namespace SRS
 {
     public class Service
     {
-        private Dictionary<string, string> ServiceInformation { get; set; }
-        private Dictionary<string, string> ServiceConfig { get; set; }
-        private Dictionary<string, string> SIPHeaders { get; set; }
-        private Dictionary<string, string> SIPResponses { get; set; }
-        private Dictionary<string, string> Capabilities { get; set; }
-
         public Service()
         {
             InitialiseVariables();
@@ -22,6 +20,12 @@ namespace SRS
             InitialiseVariables();
             ParseXMLFile(filename);
         }
+
+        private Dictionary<string, string> ServiceInformation { get; set; }
+        private Dictionary<string, string> ServiceConfig { get; set; }
+        private Dictionary<string, string> SIPHeaders { get; set; }
+        private Dictionary<string, string> SIPResponses { get; set; }
+        private Dictionary<string, string> Capabilities { get; set; }
 
         private void ParseXMLFile(string filename)
         {

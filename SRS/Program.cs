@@ -1,20 +1,26 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 using System.Xml;
+using BplusDotNet;
 using SIPLib.SIP;
 using SIPLib.Utils;
 using log4net;
-using BplusDotNet;
+using Timer = System.Timers.Timer;
+
+#endregion
 
 namespace SRS
 {
-    static class Program
+    internal static class Program
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(SIPApp));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (SIPApp));
         private static SIPApp _app;
         private static BplusTree _tree;
         private static List<string> _changedServices = new List<string>();
@@ -32,10 +38,10 @@ namespace SRS
 
         private static TransportInfo CreateTransport(string listenIp, int listenPort)
         {
-            return new TransportInfo(IPAddress.Parse(listenIp), listenPort, System.Net.Sockets.ProtocolType.Udp);
+            return new TransportInfo(IPAddress.Parse(listenIp), listenPort, ProtocolType.Udp);
         }
 
-        static void AppResponseRecvEvent(object sender, SipMessageEventArgs e)
+        private static void AppResponseRecvEvent(object sender, SipMessageEventArgs e)
         {
             Log.Info("Response Received:" + e.Message);
             Message response = e.Message;
@@ -48,7 +54,7 @@ namespace SRS
             }
         }
 
-        static void AppRequestRecvEvent(object sender, SipMessageEventArgs e)
+        private static void AppRequestRecvEvent(object sender, SipMessageEventArgs e)
         {
             Log.Info("Request Received:" + e.Message);
             Message request = e.Message;
@@ -83,7 +89,6 @@ namespace SRS
                 if (File.Exists("services.dat") && File.Exists("services.tree"))
                 {
                     _tree = BplusTree.ReOpen("services.tree", "services.dat");
-
                 }
                 else
                 {
@@ -95,7 +100,6 @@ namespace SRS
                 Log.Error("Error initialising service tree");
                 //_tree = BplusTree.Initialize("services.tree", "services.dat", 36);
             }
-
         }
 
         private static void ProcessReceivedService(string serviceXML)
@@ -123,7 +127,7 @@ namespace SRS
 
         private static void StartTimer()
         {
-            System.Timers.Timer aTimer = new System.Timers.Timer();
+            Timer aTimer = new Timer();
             aTimer.Elapsed += SendServicesToUSPS;
             aTimer.Interval = 30000;
             aTimer.Enabled = true;
@@ -136,7 +140,7 @@ namespace SRS
                 StringBuilder sb = new StringBuilder();
                 foreach (string changedService in _changedServices)
                 {
-                    sb.Append(_tree[changedService]+"\n");
+                    sb.Append(_tree[changedService] + "\n");
                 }
                 _changedServices.Clear();
                 _app.SendMessage("<sip:usps@open-ims.test>", sb.ToString(), "APPLICATION/SERVLIST+XML");
@@ -144,7 +148,7 @@ namespace SRS
         }
 
 
-        static void Main()
+        private static void Main()
         {
             TransportInfo localTransport = CreateTransport(Helpers.GetLocalIP(), 7242);
             _app = new SIPApp(localTransport);
