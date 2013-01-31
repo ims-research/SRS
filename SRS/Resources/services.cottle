@@ -1,12 +1,13 @@
 ﻿<html>
             <head>
 				<title>List of available services</title>
-				<meta http-equiv="refresh" content="15" >
-				<link rel="stylesheet" href="/site.css" type="text/css" />			</head>
+				<meta http-equiv="refresh" content="2" >
+				<link rel="stylesheet" href="/site.css" type="text/css" />
+			</head>
             <body>
                 <div id="content">
                 <h1>Services</h1>
-				There are currently {len(services)} active services.
+				There are currently {len(services)} listed services.
 				<div style="padding:50px;width:600px;">
 					<table class="tables">
 					<tbody>
@@ -16,6 +17,11 @@
 							<th>Version</th>
 							<th>Server IP</th>
 							<th>Port</th>
+							<th>Total CPU Load</th>
+							<th>Application CPU Load</th>
+							<th>Available Memory</th>
+							<th>Application Memory</th>
+							
 						</tr>
 				{set count to 1}
 				{for key, service in services:
@@ -25,6 +31,10 @@
 							<td {if gt(count, 0):class="alt"}>{dump service.ServiceInformation[2].Value}</td>
 							<td {if gt(count, 0):class="alt"}>{dump service.ServiceConfig[0].Value}</td>
 							<td {if gt(count, 0):class="alt"}>{dump service.ServiceConfig[1].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.Metrics[0].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.Metrics[1].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.Metrics[2].Value}</td>
+							<td {if gt(count, 0):class="alt"}>{dump service.Metrics[3].Value}</td>
 						</tr>
 						{if gt(count, 0):
 						{set count to -1}

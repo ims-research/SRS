@@ -37,7 +37,7 @@ h1 { font: bold 20px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
     margin-top: 5px;
     padding: 0;
     padding-bottom: 20px;
-    width: 800px;
+    /*width: 800px;*/
 }
 
 caption {

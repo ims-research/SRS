@@ -26,6 +26,7 @@ namespace SRS
         private Dictionary<string, string> SIPHeaders { get; set; }
         private Dictionary<string, string> SIPResponses { get; set; }
         private Dictionary<string, string> Capabilities { get; set; }
+        private Dictionary<string, string> Metrics { get; set; }
 
         private void ParseXMLFile(string filename)
         {
@@ -61,6 +62,10 @@ namespace SRS
                 {
                     Capabilities[element.Name.ToString()] = element.Value;
                 }
+                foreach (XElement element in block.Elements("Metrics").Elements())
+                {
+                    Metrics[element.Name.ToString()] = element.Value;
+                }
             }
         }
 
@@ -71,6 +76,7 @@ namespace SRS
             SIPHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             SIPResponses = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             Capabilities = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            Metrics = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
     }
 }
