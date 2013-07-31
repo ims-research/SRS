@@ -23,7 +23,9 @@ namespace SRS
         private static readonly ILog Log = LogManager.GetLogger(typeof (SIPApp));
         private static SIPApp _app;
         private static BplusTree _tree;
-        private static List<string> _changedServices = new List<string>();
+        private static Dictionary<string, string> _changedServices = new Dictionary<string, string>();
+        private const String ServerURI = "srs@open-ims.test";
+        private static Address _localParty = new Address("<sip:" + ServerURI + ">");
 
         private static SIPStack CreateStack(SIPApp app, string proxyIp = null, int proxyPort = -1)
         {
@@ -114,13 +116,13 @@ namespace SRS
                 if (currentService != serviceXML)
                 {
                     _tree[serviceGUID] = serviceXML;
-                    _changedServices.Add(serviceGUID);
+                    _changedServices[serviceGUID] = serviceXML;
                 }
             }
             else
             {
                 _tree[serviceGUID] = serviceXML;
-                _changedServices.Add(serviceGUID);
+                _changedServices[serviceGUID] = serviceXML;
             }
             _tree.Commit();
         }
@@ -138,7 +140,7 @@ namespace SRS
             if (_changedServices.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (string changedService in _changedServices)
+                foreach (string changedService in _changedServices.Keys)
                 {
                     sb.Append(_tree[changedService] + "\n");
                 }
@@ -158,7 +160,7 @@ namespace SRS
             const int scscfPort = 6060;
             InitKeyValueStore();
             SIPStack stack = CreateStack(_app, scscfIP, scscfPort);
-            stack.Uri = new SIPURI("srs@open-ims.test");
+            stack.Uri = new SIPURI(ServerURI);
             StartTimer();
             WebServer wb = new WebServer(_tree);
             wb.Start();
